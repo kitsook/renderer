@@ -3,6 +3,6 @@
   url => '/',
   form => '/render-api',
   hypnotoad => {
-    listen => ['http://*:3000']
+    listen => ['http://*:$PORT_NUM']
   }
 };

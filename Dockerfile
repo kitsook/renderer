@@ -1,4 +1,7 @@
 FROM ubuntu:18.04
+ARG PORT_NUM=3000
+ENV PORT_NUM=${PORT_NUM}
+
 MAINTAINER Rederly
 
 WORKDIR /usr/app
@@ -27,6 +30,7 @@ RUN apt-get update \
     libproc-processtable-perl \
     libdata-structure-util-perl \
     liblocale-maketext-lexicon-perl \
+    gettext-base \
     && apt-get clean \
     && rm -fr /var/lib/apt/lists/* /tmp/*
 
@@ -37,12 +41,12 @@ ENV MOJO_MODE=production
 
 COPY . .
 
-RUN cp render_app.conf.dist render_app.conf
+RUN envsubst < render_app.conf.dist > render_app.conf
 
 RUN git clone --single-branch --branch master --depth 1 https://github.com/openwebwork/pg.git lib/PG
 
-EXPOSE 3000
+EXPOSE ${PORT_NUM}
 
-HEALTHCHECK CMD curl -I localhost:3000/health
+HEALTHCHECK CMD curl -I localhost:${PORT_NUM}/health
 
 CMD hypnotoad -f ./script/render_app
